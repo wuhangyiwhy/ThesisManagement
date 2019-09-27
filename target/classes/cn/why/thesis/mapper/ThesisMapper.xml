@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="cn.why.thesis.mapper.ThesisMapper"> 
+ 	<sql id="thesisCols">
+ 		xh,tm,zy,gjz,zw,lwcclj,fjcclj
+ 	</sql>
+ 	
+ 	<insert id="insertThesis" parameterType="cn.why.thesis.entity.Thesis">
+ 		insert into thesis(<include refid="thesisCols"></include>) 
+ 		values
+ 		(#{xh},#{tm},#{zy},#{gjz},#{zw},#{lwcclj},#{fjcclj})
+ 	</insert>
+ 	<update id="updateThesis" parameterType="cn.why.thesis.entity.Thesis">
+ 		update thesis set tm=#{tm}, zy =#{zy},gjz=#{gjz},zw=#{zw} ,lwcclj=#{lwcclj} ,fjcclj=#{fjcclj}  where xh =#{xh}
+ 	</update>
+ 	
+ 	<select id="queryByXh" parameterType="java.lang.String" resultType="cn.why.thesis.entity.Thesis">
+ 		select <include refid="thesisCols"></include> from thesis where xh = #{xh};
+ 	</select>
+ 	
+</mapper>

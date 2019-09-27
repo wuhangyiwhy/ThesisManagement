@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="cn.why.thesis.mapper.StudentMapper">
+	<resultMap id="BaseResultStudent" type="cn.why.thesis.entity.Student">
+		<id column="xh" jdbcType="CHAR" property="xh" />
+		<result column="xm" jdbcType="VARCHAR" property="xm"/>
+		<result column="sfzh" jdbcType="CHAR" property="sfzh"/>
+		<result column="nj" jdbcType="CHAR" property="nj"/>
+		<result column="bj" jdbcType="CHAR" property="bj"/>
+		<association property="major" javaType="cn.why.thesis.entity.Major">
+		  <result  column="xy" jdbcType="VARCHAR" property="xy"/>
+		  <result  column="zy" jdbcType="VARCHAR" property="zy"/>
+		</association>
+	</resultMap>
+	 <sql id="studentCols">
+ 		xh,xm,sfzh,nj,bj,image
+ 	</sql>
+ 	<!-- 查询学生信息通过学号 -->
+ 	<select id="queryStudentByXh"  parameterType="cn.why.thesis.entity.Student" resultMap="BaseResultStudent" >
+ 		select s.*,m.* from student s,major m where  s.major_id=m.id and xh= #{xh}
+ 	</select> 
+ 	<select id="queryStudentPage" resultMap="BaseResultStudent" parameterType="cn.why.thesis.entity.Student">
+		select a.*,b.* from student a ,major b where a.major_id=b.id order by xm
+		<if test="page!=null and limit!=null">
+			limit #{page},#{limit}
+		</if>
+	</select>
+	<select id="queryStudentCount"  resultType="java.lang.Integer">
+ 		select count(xh) as count from student s ,major m where s.major_id = m.id
+ 	</select>
+ 	<select id="getByXh" resultMap="BaseResultStudent" parameterType="java.lang.String">
+		select a.*,b.* from student a ,major b where a.major_id=b.id and xh = #{xh} 
+	</select>
+ 	<select id="selStudentByAdminAndxhAndsfzh" parameterType="cn.why.thesis.entity.Student"  resultType="cn.why.thesis.entity.Student">
+ 		select xh,xm,sfzh,nj, image from student where xh=#{xh} and xm =#{xm} and sfzh = #{sfzh};
+ 	</select>
+ 	
+ 	<update id="updateMyInfo"   parameterType="cn.why.thesis.entity.Student" >
+ 		update student set xm=#{xm}, sfzh =#{sfzh} ,xh =#{xh},nj =#{nj}  where xh =#{xh}
+ 	</update>
+ 	<select id="queryStudent"  parameterType="cn.why.thesis.entity.Student" resultMap="BaseResultStudent">
+ 		select xh,xm,sfzh,nj,bj,xy,zy from student s,major m where s.major_id=m.id and xh=#{xh} 
+ 	</select>
+ 	
+ 	<insert id="insertStudent" parameterType="cn.why.thesis.entity.Student">
+ 		insert into student( <include refid="studentCols"></include>)  
+ 		value(#{xh},#{xm},#{sfzh},#{nj},#{bj}) 
+ 	</insert>
+ 	<update id="updateStudent"   parameterType="cn.why.thesis.entity.Student" >
+ 		update student set sfzh=#{sfzh}, major_id=#{major_id} where xh =#{xh}
+ 	</update>
+ 	
+ 	<insert id="addphoto" parameterType="cn.why.thesis.entity.Student">
+ 		insert into student( image)  
+ 		value(#{image}) where xh=#{xh}
+ 	</insert>
+ 	
+ 	<update id="updateByXh" parameterType="cn.why.thesis.entity.Student">
+ 		update student set image = #{image}  where xh =#{xh}
+ 	</update>
+ 	<!-- 查询并批量导出数据 -->
+ 	<select id="selectStudentInfo"   resultType="cn.why.thesis.entity.StudentExport">
+ 		select s.*,m.* from student s, major m where s.major_id=m.id
+ 	</select> 
+</mapper>

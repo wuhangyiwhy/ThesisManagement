@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="cn.why.thesis.mapper.TeacherMapper">
+
+ 	<resultMap id="BaseResultMap" type="cn.why.thesis.entity.Thesis">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="xh" jdbcType="CHAR" property="xh"/>
+		<result column="tm" jdbcType="VARCHAR" property="tm"/>
+		<result column="zy" jdbcType="VARCHAR" property="zy"/>
+		<result column="gjz" jdbcType="VARCHAR" property="gjz"/>
+		<result column="zw" jdbcType="VARCHAR" property="zw"/>
+		<result column="lwcclj" jdbcType="VARCHAR" property="lwcclj"/>
+		<result column="fjcclj" jdbcType="VARCHAR" property="fjcclj"/>
+		<association property="student" javaType="cn.why.thesis.entity.Student">
+		  <result  column="xh" jdbcType="CHAR" property="xh"/>	
+		  <result  column="xm" jdbcType="VARCHAR" property="xm"/> 
+		  <result  column="sfzh" jdbcType="CHAR" property="sfzh"/>
+		  <result  column="nj" jdbcType="CHAR" property="nj"/>
+		  <result  column="bj" jdbcType="CHAR" property="bj"/> 
+		</association>
+		<association property="collegesAndMajors" javaType="cn.why.thesis.entity.Major">
+		  <result  column="ids" jdbcType="INTEGER" property="id"/>	
+		  <result  column="xy" jdbcType="VARCHAR" property="xy"/> 
+		  <result  column="zhuanye" jdbcType="VARCHAR" property="zy"/>
+		</association>
+	</resultMap>
+ 	<select id="selTeacherByNoAndName" parameterType="cn.why.thesis.entity.Teacher"  resultType="cn.why.thesis.entity.Teacher">
+ 		select teacherNo,teacherName from teacher where teacherNo=#{teacherNo} and teacherName =#{teacherName}
+ 	</select>
+ 	
+ 	<select id="queryTeacher"  parameterType="cn.why.thesis.entity.Teacher" resultType="cn.why.thesis.entity.Teacher">
+ 		select teacherNo,teacherName from teacher where teacherNo =#{teacherNo}
+ 	</select>
+ 	
+ 	<select id="selectCountTeacher"  resultType="java.lang.Integer">
+ 		select count(teacherNo) as count from teacher
+ 	</select>
+	<select id="queryPageTable" resultType="cn.why.thesis.entity.Teacher" parameterType="cn.why.thesis.entity.Teacher">
+		select teacherNo,teacherName from teacher 
+		<if test="page!=null and limit!=null">
+			limit #{page},#{limit}
+		</if>
+	</select>
+ 	
+	<select id="queryThesis" resultType="java.util.HashMap"  resultMap="BaseResultMap" >
+		select t.*,s.xh,s.xm,s.sfzh,s.nj,s.bj, c.id as ids,c.xy ,c.zy as zhuanye  from 
+		thesis t  join student s on t.xh=s.xh  join major c on s.major_id=c.id
+		where ${keyword} 
+		<if test="page!=null and limit!=null">
+			limit ${page},${limit}
+		</if>
+	</select>
+	<select id="queryCountThesis"  resultType="java.lang.Integer">
+		select count(t.xh) as count  from 
+		thesis t  join student s on t.xh=s.xh  join major c on s.major_id=c.id
+ 	</select> 
+ 	<select id="queryThsisByXh"  parameterType="cn.why.thesis.entity.Thesis" resultType="cn.why.thesis.entity.Thesis">
+ 		select xh,tm,zy,gjz,zw,lwcclj,fjcclj from thesis where xh= #{xh}
+ 	</select>  
+ 	<delete id="delStudent" parameterType="cn.why.thesis.entity.Student"> 
+ 		delete  from student where xh=#{xh}
+ 	</delete>
+ 	
+ 	<update id="updateStudentInfo" parameterType="java.util.HashMap">
+ 		update student set ${field}=#{fieldvalue} where xh =#{xh}
+ 	</update>
+ 	<!-- 批量导入学生数据语句 -->
+ 	<insert id="insertInfoBatch" parameterType="java.util.List">
+    	insert into student (xh, xm,sfzh,nj,major_id, bj) values
+	    <foreach collection="list" item="item" index="index" separator=",">
+	      (#{item.xh}, #{item.xm}, #{item.sfzh},#{item.nj},#{item.major_id}, #{item.bj})
+	    </foreach>
+	</insert>
+	
+ 	<delete id="delThesisInfo" parameterType="cn.why.thesis.entity.Thesis">
+ 		delete  from thesis where xh=#{xh}
+ 	</delete>
+
+</mapper>

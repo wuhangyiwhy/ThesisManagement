@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="cn.why.thesis.mapper.MajorMapper">
+ 	
+ 	<select id="querymajor" resultType="cn.why.thesis.entity.Major" parameterType="java.util.HashMap">
+		select id,xy,zy from major
+		<if test="page!=null and limit!=null">
+			limit #{page},#{limit}
+		</if>
+	</select>
+	<select id="querymajorCount"  resultType="java.lang.Integer">
+ 		select count(id) as count from major
+ 	</select>
+ 	<select id="selectMajorInfo" resultType="cn.why.thesis.entity.Major" >
+		select id,xy,zy from major
+	</select> 
+	<select id="findById" parameterType="java.lang.Integer" resultType="cn.why.thesis.entity.Major" >
+		select id,xy,zy from major where id = #{id} 
+	</select>
+	<select id="findAllXy" resultType="cn.why.thesis.entity.Major" >
+		select distinct xy from major
+	</select>
+	<select id="findZyByXy" resultType="cn.why.thesis.entity.Major" parameterType="java.lang.String">
+		select  id,zy from major where xy=#{xy}
+	</select>
+ 	<update id="updatemajor" parameterType="cn.why.thesis.entity.Major">
+ 		update major set xy=#{xy}, zy=#{zy} where id =#{id}
+ 	</update>
+ 	<insert id="insertMajor" parameterType="cn.why.thesis.entity.Major">
+ 		insert into major( xy,zy)  value(#{xy},#{zy})
+ 	</insert>
+ 	<delete id="delmajor" parameterType="cn.why.thesis.entity.Major">
+ 		delete from major where id = #{id}
+ 	</delete>
+</mapper>
